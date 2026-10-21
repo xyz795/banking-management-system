@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ashish Bank | Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #102a43;
+            --blue: #2563eb;
+            --green: #15803d;
+            --background: #f1f5f9;
+            --muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--background);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* Header */
+
+        .header {
+            background: linear-gradient(120deg, #102a43, #1e40af);
+            color: white;
+            padding: 22px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 55px;
+            height: 55px;
+            background: white;
+            color: var(--navy);
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            font-size: 29px;
+        }
+
+        .brand h1 {
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #dbeafe;
+            letter-spacing: 1px;
+        }
+
+        .header-label {
+            font-size: 13px;
+            color: #dbeafe;
+        }
+
+        /* Main */
+
+        .container {
+            max-width: 1200px;
+            width: 90%;
+            margin: 35px auto;
+        }
+
+        .welcome {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 28px;
+        }
+
+        .welcome h2 {
+            color: var(--navy);
+            font-size: 29px;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .status {
+            background: #dcfce7;
+            color: #166534;
+            padding: 10px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* Statistics */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+            margin-bottom: 38px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 18px rgba(15, 23, 42, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            right: -22px;
+            top: -22px;
+            width: 90px;
+            height: 90px;
+            background: #dbeafe;
+            border-radius: 50%;
+        }
+
+        .stat-card.balance::after {
+            background: #dcfce7;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            display: grid;
+            place-items: center;
+            background: #dbeafe;
+            border-radius: 12px;
+            font-size: 23px;
+        }
+
+        .balance .stat-icon {
+            background: #dcfce7;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .stat-value {
+            color: var(--navy);
+            font-size: 30px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        /* Services */
+
+        .section-heading {
+            margin-bottom: 20px;
+        }
+
+        .section-heading h2 {
+            color: var(--navy);
+            font-size: 23px;
+            margin-bottom: 7px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            background: white;
+            padding: 25px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .service-card:hover,
+        .service-card:focus-visible {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10);
+            outline: none;
+        }
+
+        .service-icon {
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            background: #eff6ff;
+            border-radius: 14px;
+            font-size: 27px;
+            margin-bottom: 18px;
+        }
+
+        .service-card h3 {
+            color: var(--navy);
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .open-link {
+            display: inline-block;
+            color: var(--blue);
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 17px;
+        }
+
+        /* Footer */
+
+        .footer {
+            margin-top: 45px;
+            padding: 24px 15px;
+            text-align: center;
+            background: var(--navy);
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 850px) {
+            .services {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 550px) {
+            .header {
+                padding: 20px 5%;
+            }
+
+            .brand h1 {
+                font-size: 22px;
+            }
+
+            .header-label {
+                font-size: 12px;
+            }
+
+            .container {
+                width: 92%;
+                margin-top: 25px;
+            }
+
+            .welcome h2 {
+                font-size: 24px;
+            }
+
+            .stats,
+            .services {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="brand">
+            <div class="logo">🏦</div>
+
+            <div>
+                <h1>ASHISH BANK</h1>
+                <p>TRUST · SECURITY · SERVICE</p>
+            </div>
+        </div>
+
+        <div class="header-label">
+            BANKING MANAGEMENT SYSTEM
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <div>
+                <h2>Welcome to Ashish Bank 👋</h2>
+
+                <p>
+                    Manage customer accounts and banking services
+                    from your central dashboard.
+                </p>
+            </div>
+
+            <div class="status">● Dashboard Overview</div>
+        </section>
+
+        <section class="stats">
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-label">Total Customers</div>
+                </div>
+
+                <div class="stat-value" th:text="${totalCustomers}">0</div>
+            </div>
+
+            <div class="stat-card balance">
+                <div class="stat-top">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Total Bank Balance</div>
+                </div>
+
+                <div class="stat-value">
+                    ₹<span th:text="${totalBalance}">0.00</span>
+                </div>
+            </div>
+
+        </section>
+
+        <section>
+            <div class="section-heading">
+                <h2>Banking Services</h2>
+                <p>Select a service to continue.</p>
+            </div>
+
+            <div class="services">
+
+                <a href="/create-account" class="service-card">
+                    <div class="service-icon">👤</div>
+                    <h3>Create Account</h3>
+                    <p>Open a new customer bank account.</p>
+                    <span class="open-link">Open service →</span>
+                </a>
+
+                <a href="/check-balance" class="service-card">
+                    <div class="service-icon">💳</div>
+                    <h3>Check Balance</h3>
+                    <p>View account details and available balance.</p>
+                    <span class="open-link">Open service →</span>
+                </a>
+
+                <a href="/deposit" class="service-card">
+                    <div class="service-icon">💵</div>
+                    <h3>Deposit Money</h3>
+                    <p>Add money to an existing customer account.</p>
+                    <span class="open-link">Open service →</span>
+                </a>
+
+                <a href="/withdraw" class="service-card">
+                    <div class="service-icon">🏧</div>
+                    <h3>Withdraw Money</h3>
+                    <p>Withdraw money from an existing account.</p>
+                    <span class="open-link">Open service →</span>
+                </a>
+
+                <a href="/transactions" class="service-card">
+                    <div class="service-icon">📄</div>
+                    <h3>Transaction History</h3>
+                    <p>Search and review previous transactions.</p>
+                    <span class="open-link">View transactions →</span>
+                </a>
+
+                <a href="/create-account" class="service-card">
+                    <div class="service-icon">➕</div>
+                    <h3>Register Customer</h3>
+                    <p>Go to the existing customer account creation page.</p>
+                    <span class="open-link">Open service →</span>
+                </a>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        © 2026 Ashish Bank | Banking Management System
+        <br>
+        Demo application for learning purposes.
+    </footer>
+
+</body>
+
+</html>

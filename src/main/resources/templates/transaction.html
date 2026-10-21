@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Transaction History | Ashish Bank</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+        }
+
+        header {
+            background: #102a43;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #102a43;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #102a43;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #102a43;
+            color: white;
+        }
+
+        .deposit {
+            color: green;
+            font-weight: bold;
+        }
+
+        .withdraw {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .message {
+            padding: 12px;
+            background: #e8f1fb;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 25px;
+            color: #102a43;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>ASHISH BANK</h1>
+        <p>Transaction History</p>
+    </header>
+
+    <div class="container">
+
+        <h2>Account Transactions</h2>
+
+        <form action="/transactions" method="get">
+
+            <input type="text" name="accountNumber" placeholder="Enter Account Number" th:value="${accountNumber}"
+                required>
+
+            <button type="submit">Search Transactions</button>
+
+        </form>
+
+        <div class="message" th:if="${transactions != null and transactions.isEmpty()}">
+            No transactions found for this account.
+        </div>
+
+        <div class="table-wrapper" th:if="${transactions != null and !transactions.isEmpty()}">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Account Number</th>
+                        <th>Type</th>
+                        <th>Amount (₹)</th>
+                        <th>Date &amp; Time</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="txn : ${transactions}">
+
+                        <td th:text="${txn.id}"></td>
+
+                        <td th:text="${txn.accountNumber}"></td>
+
+                        <td th:text="${txn.type}" th:classappend="${txn.type == 'DEPOSIT'} ? 'deposit' : 'withdraw'">
+                        </td>
+
+                        <td th:text="${txn.amount}"></td>
+
+                        <td th:text="${#temporals.format(txn.transactionDate, 'dd-MM-yyyy HH:mm:ss')}"></td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <a class="back" href="/">← Back to Dashboard</a>
+
+    </div>
+
+</body>
+
+</html>

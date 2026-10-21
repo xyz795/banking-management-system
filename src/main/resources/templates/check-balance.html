@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Account Balance</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div class="main-content" style="margin-left:0; max-width:700px; margin:auto;">
+
+        <h1>Check Account Balance</h1>
+        <p>Enter your account number to view account details.</p>
+
+        <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red; margin-top:20px;"></p>
+
+        <form th:action="@{/check-balance}" method="post"
+            style="background:white; padding:25px; margin-top:25px; border-radius:12px;">
+
+            <label for="accountNumber">Account Number</label>
+
+            <input id="accountNumber" type="text" name="accountNumber" required maxlength="10" pattern="[0-9]{10}"
+                title="Enter the 10-digit account number" style="width:100%; padding:12px; margin:10px 0 20px;">
+
+            <button type="submit"
+                style="background:#123b70; color:white; border:0; padding:14px 24px; border-radius:6px; cursor:pointer;">
+                Check Balance
+            </button>
+
+            <a href="/" style="margin-left:15px;">Dashboard</a>
+        </form>
+
+        <div th:if="${customer}" style="background:white; padding:25px; margin-top:25px; border-radius:12px;">
+
+            <h2>Account Details</h2>
+
+            <p style="margin-top:15px;">
+                <strong>Account Number:</strong>
+                <span th:text="${customer.accountNumber}"></span>
+            </p>
+
+            <p style="margin-top:15px;">
+                <strong>Customer Name:</strong>
+                <span th:text="${customer.fullName}"></span>
+            </p>
+
+            <p style="margin-top:15px;">
+                <strong>Available Balance:</strong>
+                ₹ <span th:text="${customer.balance}"></span>
+            </p>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Details - Banking System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #123b69;
+            color: white;
+            padding: 20px 30px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #00000015;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        h2 {
+            color: #123b69;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .label {
+            color: #64748b;
+            font-weight: bold;
+        }
+
+        .value {
+            color: #123b69;
+            font-weight: bold;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #123b69;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .back-button {
+            background: #64748b;
+        }
+
+        @media (max-width: 500px) {
+            .detail-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Banking System - Customer Details</h1>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2>Customer Information</h2>
+
+            <div class="detail-row">
+                <span class="label">Account Number</span>
+                <span class="value" th:text="${customer.accountNumber}">Account Number</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">Customer Name</span>
+                <span class="value" th:text="${customer.fullName}">Customer Name</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">Mobile Number</span>
+                <span class="value" th:text="${customer.mobileNumber}">Mobile Number</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">Account Balance</span>
+                <span class="value">
+                    ₹ <span th:text="${customer.balance}">0.00</span>
+                </span>
+            </div>
+
+            <div class="buttons">
+                <a class="button back-button" th:href="@{/admin/dashboard}">
+                    Back to Dashboard
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
