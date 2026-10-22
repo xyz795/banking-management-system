@@ -4,171 +4,527 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Banking System</title>
+    <meta name="theme-color" content="#0b1739">
+
+    <title>Ashish Bank | Admin Dashboard</title>
 
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --navy: #0b1739;
+            --blue: #3867f5;
+            --background: #f5f7fc;
+            --muted: #75809a;
+            --border: #e8ecf4;
+            --white: #ffffff;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f1f5f9;
-            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--background);
+            color: #17213b;
+            min-height: 100vh;
         }
 
-        header {
-            background: #123b69;
+        button,
+        input {
+            font: inherit;
+        }
+
+        .topbar {
+            background: linear-gradient(120deg, #0b1739, #183a85 70%, #3867f5);
             color: white;
-            padding: 20px 30px;
+            padding: 23px 5%;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            gap: 20px;
             flex-wrap: wrap;
-            gap: 15px;
+            box-shadow: 0 8px 25px rgba(11, 23, 57, 0.15);
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 25px;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            height: 50px;
+            width: 50px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 15px;
+            font-size: 26px;
+        }
+
+        .brand h1 {
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            margin-top: 5px;
+            color: #dce7ff;
+            font-size: 11px;
+            letter-spacing: 1.5px;
         }
 
         .logout {
-            background: #ffffff;
-            color: #123b69;
-            padding: 10px 16px;
+            background: white;
+            color: var(--navy);
+            padding: 11px 19px;
             border: none;
-            border-radius: 6px;
-            font-weight: bold;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .logout:hover {
+            background: #edf2ff;
+            transform: translateY(-2px);
         }
 
         .container {
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 20px;
+            max-width: 1280px;
+            width: 92%;
+            margin: 35px auto;
         }
 
-        .cards {
+        .welcome {
             display: flex;
-            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
             flex-wrap: wrap;
+            margin-bottom: 28px;
         }
 
-        .card {
+        .eyebrow {
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 9px;
+        }
+
+        .welcome h2 {
+            color: var(--navy);
+            font-size: clamp(25px, 3vw, 32px);
+            margin-bottom: 9px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: #e8f8ef;
+            color: #167647;
+            border: 1px solid #d0f0dc;
+            border-radius: 30px;
+            padding: 11px 16px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .admin-badge span {
+            width: 8px;
+            height: 8px;
+            background: #22a565;
+            border-radius: 50%;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 27px;
+            box-shadow: 0 7px 25px rgba(26, 44, 88, 0.04);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 13px 30px rgba(26, 44, 88, 0.08);
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            width: 115px;
+            height: 115px;
+            right: -25px;
+            top: -35px;
+            background: #edf2ff;
+            border-radius: 50%;
+        }
+
+        .stat-card.balance::after {
+            background: #e5f8ed;
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 22px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            background: #edf2ff;
+            border-radius: 14px;
+            font-size: 23px;
+        }
+
+        .balance .stat-icon {
+            background: #e5f8ed;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: var(--navy);
+            font-size: clamp(26px, 3vw, 34px);
+            font-weight: 800;
+            overflow-wrap: anywhere;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-note {
+            margin-top: 9px;
+            color: var(--muted);
+            font-size: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel {
             background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
             padding: 25px;
-            border-radius: 10px;
-            flex: 1;
-            min-width: 220px;
-            box-shadow: 0 2px 8px #00000015;
-        }
-
-        .card h3 {
-            color: #475569;
-            margin-top: 0;
-        }
-
-        .card h2 {
-            color: #123b69;
-            margin-bottom: 0;
-        }
-
-        .search-box {
-            background: white;
-            padding: 22px;
             margin-top: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px #00000015;
+            box-shadow: 0 7px 25px rgba(26, 44, 88, 0.035);
         }
 
-        .search-box h2 {
-            margin-top: 0;
-            color: #123b69;
+        .panel-heading {
+            margin-bottom: 20px;
+        }
+
+        .panel-heading h2 {
+            color: var(--navy);
+            font-size: 21px;
+            margin-bottom: 7px;
+        }
+
+        .panel-heading p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
         }
 
         .search-form {
             display: flex;
-            gap: 10px;
+            align-items: stretch;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .search-form input {
             flex: 1;
             min-width: 200px;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 15px;
+            padding: 13px 15px;
+            border: 1px solid #dce2ee;
+            border-radius: 10px;
+            outline: none;
+            color: #17213b;
+            background: #fbfcff;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        .search-form button,
-        .reset-button {
+        .search-form input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(56, 103, 245, 0.12);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 12px 18px;
             border: none;
-            border-radius: 6px;
-            background: #123b69;
-            color: white;
-            cursor: pointer;
-            font-size: 15px;
+            border-radius: 10px;
             text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
         }
 
-        .reset-button {
-            display: inline-block;
-            margin-top: 12px;
-            background: #64748b;
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2853db;
+        }
+
+        .btn-secondary {
+            background: #edf1f8;
+            color: #34415e;
+            margin-top: 13px;
+        }
+
+        .btn-secondary:hover {
+            background: #e1e8f4;
         }
 
         .message {
-            margin-top: 15px;
-            color: #b91c1c;
-            font-weight: bold;
+            margin-top: 16px;
+            padding: 12px 14px;
+            color: #a12626;
+            background: #fff0f0;
+            border: 1px solid #ffd8d8;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .table-panel {
+            padding: 25px 0 0;
+            overflow: hidden;
+        }
+
+        .table-heading {
+            padding: 0 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .table-heading h2 {
+            color: var(--navy);
+            font-size: 21px;
+            margin-bottom: 7px;
+        }
+
+        .table-heading p {
+            color: var(--muted);
+            font-size: 13px;
         }
 
         .table-wrapper {
+            width: 100%;
             overflow-x: auto;
         }
 
         table {
             width: 100%;
+            min-width: 700px;
             border-collapse: collapse;
             background: white;
-            margin-top: 20px;
         }
 
-        th,
-        td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left;
+        thead {
+            background: #f6f8fd;
         }
 
         th {
-            background: #123b69;
+            padding: 15px 20px;
+            text-align: left;
+            color: #65718b;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 17px 20px;
+            color: #34415e;
+            font-size: 13px;
+            border-bottom: 1px solid #eef1f7;
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f8faff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .account-number {
+            color: var(--navy);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .customer-name {
+            color: #17213b;
+            font-weight: 700;
+        }
+
+        .balance-value {
+            color: #167647;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .view-btn {
+            display: inline-block;
+            background: #edf2ff;
+            color: #2d54cc;
+            padding: 9px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .view-btn:hover {
+            background: #dce6ff;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--muted);
+            padding: 30px 15px;
+        }
+
+        .footer {
+            margin-top: 45px;
+            background: var(--navy);
+            color: #c5cfe5;
+            text-align: center;
+            padding: 25px 15px;
+            font-size: 12px;
+            line-height: 2;
+        }
+
+        .footer strong {
             color: white;
+            letter-spacing: 1px;
         }
 
-        tr:nth-child(even) {
-            background: #f8fafc;
-        }
+        @media (max-width: 650px) {
+            .topbar {
+                padding: 20px 5%;
+            }
 
-        .section-title {
-            color: #123b69;
-            margin-top: 30px;
-        }
+            .brand h1 {
+                font-size: 18px;
+            }
 
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 20px;
+            .brand p {
+                font-size: 9px;
+                letter-spacing: 1px;
+            }
+
+            .logo {
+                width: 44px;
+                height: 44px;
+                font-size: 23px;
             }
 
             .container {
-                padding: 12px;
+                width: 92%;
+                margin-top: 25px;
             }
 
-            .card {
-                min-width: 100%;
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 23px;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+
+            .table-panel {
+                padding: 22px 0 0;
+            }
+
+            .table-heading {
+                padding: 0 20px 18px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-form input {
+                min-width: 0;
+                width: 100%;
+            }
+
+            .search-form .btn {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
             }
         }
     </style>
@@ -176,89 +532,145 @@
 
 <body>
 
-    <header>
-        <h1>Banking System - Admin Dashboard</h1>
-
-        <form th:action="@{/logout}" method="post">
-            <button class="logout" type="submit">Logout</button>
-        </form>
-    </header>
-
-    <div class="container">
-
-        <div class="cards">
-            <div class="card">
-                <h3>Customers Found / Total Customers</h3>
-                <h2 th:text="${totalCustomers}">0</h2>
-            </div>
-
-            <div class="card">
-                <h3>Balance of Listed Customers (₹)</h3>
-                <h2 th:text="${totalBalance}">0</h2>
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo">🏦</div>
+            <div>
+                <h1>ASHISH BANK</h1>
+                <p>ADMINISTRATION PORTAL</p>
             </div>
         </div>
 
-        <div class="search-box">
-            <h2>Search Customer</h2>
+        <form th:action="@{/logout}" method="post">
+            <button class="logout" type="submit">Logout ↗</button>
+        </form>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <div>
+                <div class="eyebrow">ADMINISTRATION</div>
+                <h2>Admin Dashboard 👋</h2>
+                <p>Monitor customer accounts and review banking information.</p>
+            </div>
+
+            <div class="admin-badge">
+                <span></span>
+                Admin Panel Active
+            </div>
+        </section>
+
+        <section class="stats">
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-label">Customers Found / Total Customers</div>
+                </div>
+
+                <div class="stat-value" th:text="${totalCustomers}">0</div>
+                <div class="stat-note">Customers in the current listing</div>
+            </div>
+
+            <div class="stat-card balance">
+                <div class="stat-top">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Balance of Listed Customers</div>
+                </div>
+
+                <div class="stat-value">
+                    ₹<span th:text="${totalBalance}">0.00</span>
+                </div>
+                <div class="stat-note">Combined balance of listed accounts</div>
+            </div>
+
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <h2>Search Customer</h2>
+                <p>Find a customer using their bank account number.</p>
+            </div>
 
             <form class="search-form" th:action="@{/admin/dashboard}" method="get">
-
                 <input type="text" name="accountNumber" placeholder="Enter customer account number"
-                    th:value="${searchAccountNumber}" required>
+                    th:value="${searchAccountNumber}" aria-label="Customer account number" required>
 
-                <button type="submit">Search</button>
+                <button class="btn btn-primary" type="submit">
+                    🔍 Search Customer
+                </button>
             </form>
 
-            <a class="reset-button" th:href="@{/admin/dashboard}">
-                Show All Customers
+            <a class="btn btn-secondary" th:href="@{/admin/dashboard}">
+                ↻ Show All Customers
             </a>
 
             <p class="message" th:if="${searchMessage}" th:text="${searchMessage}">
             </p>
-        </div>
+        </section>
 
-        <h2 class="section-title">Customer Details</h2>
+        <section class="panel table-panel">
 
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Account Number</th>
-                        <th>Customer Name</th>
-                        <th>Mobile Number</th>
-                        <th>Balance (₹)</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
+            <div class="table-heading">
+                <div>
+                    <h2>Customer Details</h2>
+                    <p>Review the customer accounts listed below.</p>
+                </div>
+            </div>
 
-                <tbody>
-                    <tr th:each="customer : ${customers}">
-                        <td th:text="${customer.accountNumber}"></td>
-                        <td th:text="${customer.fullName}"></td>
-                        <td th:text="${customer.mobileNumber}"></td>
-                        <td th:text="${customer.balance}"></td>
-                        <td>
-                            <a th:href="@{/admin/customer-details(accountNumber=${customer.accountNumber})}" style="background:#123b69; color:white; padding:8px 12px;
-              text-decoration:none; border-radius:5px;">
-                                View Details
-                            </a>
-                        </td>
-                        <td>
-                            <a class="button"
-                                th:href="@{/admin/customer-details(accountNumber=${customer.accountNumber})}">
-                                View Details
-                            </a>
-                        </td>
-                    </tr>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Account Number</th>
+                            <th>Customer Name</th>
+                            <th>Mobile Number</th>
+                            <th>Balance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
 
-                    <tr th:if="${#lists.isEmpty(customers)}">
-                        <td colspan="5">No customers found.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                    <tbody>
+                        <tr th:each="customer : ${customers}">
+                            <td class="account-number" th:text="${customer.accountNumber}"></td>
 
-    </div>
+                            <td class="customer-name" th:text="${customer.fullName}"></td>
+
+                            <td th:text="${customer.mobileNumber}"></td>
+
+                            <td class="balance-value">
+                                ₹<span th:text="${customer.balance}"></span>
+                            </td>
+
+                            <td>
+                                <a class="view-btn"
+                                    th:href="@{/admin/customer-details(accountNumber=${customer.accountNumber})}">
+                                    View Details →
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(customers)}">
+                            <td colspan="5" class="empty-state">
+                                No customers found. Try another account number.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <strong>ASHISH BANK</strong>
+        <br>
+        © 2026 Ashish Bank | Banking Management System
+        <br>
+        Demo application for learning purposes.
+    </footer>
 
 </body>
 

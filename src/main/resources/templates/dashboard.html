@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1739">
 
     <title>Ashish Bank | Dashboard</title>
 
@@ -15,32 +16,37 @@
         }
 
         :root {
-            --navy: #102a43;
-            --blue: #2563eb;
-            --green: #15803d;
-            --background: #f1f5f9;
-            --muted: #64748b;
-            --border: #e2e8f0;
+            --navy: #0b1739;
+            --blue: #3867f5;
+            --blue-light: #edf2ff;
+            --green: #14804a;
+            --background: #f5f7fc;
+            --muted: #75809a;
+            --border: #e8ecf4;
+            --white: #ffffff;
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Segoe UI", Arial, sans-serif;
             background: var(--background);
-            color: #1e293b;
+            color: #17213b;
             min-height: 100vh;
         }
 
-        /* Header */
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
 
         .header {
-            background: linear-gradient(120deg, #102a43, #1e40af);
+            background: linear-gradient(120deg, #0b1739, #183a85 65%, #3867f5);
             color: white;
-            padding: 22px 6%;
+            padding: 24px 6%;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 20px;
             flex-wrap: wrap;
+            box-shadow: 0 8px 28px rgba(11, 23, 57, 0.15);
         }
 
         .brand {
@@ -50,39 +56,43 @@
         }
 
         .logo {
-            width: 55px;
-            height: 55px;
-            background: white;
-            color: var(--navy);
-            border-radius: 14px;
+            width: 54px;
+            height: 54px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
             display: grid;
             place-items: center;
-            font-size: 29px;
+            font-size: 28px;
         }
 
         .brand h1 {
-            font-size: 26px;
-            letter-spacing: 1px;
+            font-size: 25px;
+            letter-spacing: 1.5px;
+            font-weight: 800;
         }
 
         .brand p {
             margin-top: 6px;
-            font-size: 12px;
-            color: #dbeafe;
-            letter-spacing: 1px;
+            font-size: 10px;
+            color: #dce7ff;
+            letter-spacing: 2px;
         }
 
         .header-label {
-            font-size: 13px;
-            color: #dbeafe;
+            padding: 10px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            font-size: 11px;
+            letter-spacing: 1.3px;
+            color: #e6edff;
         }
 
-        /* Main */
-
         .container {
-            max-width: 1200px;
+            max-width: 1240px;
             width: 90%;
-            margin: 35px auto;
+            margin: 38px auto;
         }
 
         .welcome {
@@ -90,113 +100,155 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 28px;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .eyebrow {
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
         }
 
         .welcome h2 {
             color: var(--navy);
-            font-size: 29px;
+            font-size: clamp(25px, 3vw, 34px);
+            font-weight: 750;
             margin-bottom: 10px;
         }
 
         .welcome p {
             color: var(--muted);
-            line-height: 1.6;
+            line-height: 1.7;
             font-size: 14px;
         }
 
         .status {
-            background: #dcfce7;
-            color: #166534;
-            padding: 10px 15px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background: #e8f8ef;
+            color: #167647;
+            padding: 12px 17px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid #d0f0dc;
         }
 
-        /* Statistics */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22a565;
+            border-radius: 50%;
+        }
 
         .stats {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 22px;
-            margin-bottom: 38px;
+            margin-bottom: 42px;
         }
 
         .stat-card {
-            background: white;
+            background: var(--white);
             padding: 28px;
-            border-radius: 16px;
+            border-radius: 20px;
             border: 1px solid var(--border);
-            box-shadow: 0 5px 18px rgba(15, 23, 42, 0.04);
+            box-shadow: 0 8px 28px rgba(26, 44, 88, 0.04);
             position: relative;
             overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 32px rgba(26, 44, 88, 0.08);
         }
 
         .stat-card::after {
             content: "";
             position: absolute;
-            right: -22px;
-            top: -22px;
-            width: 90px;
-            height: 90px;
-            background: #dbeafe;
+            right: -32px;
+            top: -40px;
+            width: 145px;
+            height: 145px;
+            background: #edf2ff;
             border-radius: 50%;
         }
 
         .stat-card.balance::after {
-            background: #dcfce7;
+            background: #e5f8ed;
         }
 
         .stat-top {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 22px;
+            gap: 14px;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
         }
 
         .stat-icon {
-            width: 45px;
-            height: 45px;
+            width: 48px;
+            height: 48px;
             display: grid;
             place-items: center;
-            background: #dbeafe;
-            border-radius: 12px;
+            background: var(--blue-light);
+            border-radius: 15px;
             font-size: 23px;
         }
 
         .balance .stat-icon {
-            background: #dcfce7;
+            background: #e5f8ed;
         }
 
         .stat-label {
             color: var(--muted);
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         .stat-value {
             color: var(--navy);
-            font-size: 30px;
-            font-weight: bold;
+            font-size: clamp(25px, 3vw, 34px);
+            font-weight: 800;
             overflow-wrap: anywhere;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Services */
+        .stat-note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--muted);
+            position: relative;
+            z-index: 1;
+        }
 
         .section-heading {
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 21px;
         }
 
         .section-heading h2 {
             color: var(--navy);
             font-size: 23px;
-            margin-bottom: 7px;
+            margin-bottom: 8px;
         }
 
         .section-heading p {
             color: var(--muted);
-            font-size: 14px;
+            font-size: 13px;
+            line-height: 1.6;
         }
 
         .services {
@@ -206,21 +258,25 @@
         }
 
         .service-card {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             text-decoration: none;
             color: inherit;
-            background: white;
+            background: var(--white);
             padding: 25px;
             border: 1px solid var(--border);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.03);
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(26, 44, 88, 0.025);
+            min-height: 220px;
+            transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
         }
 
         .service-card:hover,
         .service-card:focus-visible {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10);
+            transform: translateY(-5px);
+            box-shadow: 0 16px 32px rgba(26, 44, 88, 0.09);
+            border-color: #cbd7ff;
             outline: none;
         }
 
@@ -229,79 +285,135 @@
             height: 52px;
             display: grid;
             place-items: center;
-            background: #eff6ff;
-            border-radius: 14px;
-            font-size: 27px;
-            margin-bottom: 18px;
+            background: var(--blue-light);
+            border-radius: 15px;
+            font-size: 25px;
+            margin-bottom: 19px;
+        }
+
+        .service-card:nth-child(2) .service-icon,
+        .service-card:nth-child(4) .service-icon {
+            background: #e8f8ef;
+        }
+
+        .service-card:nth-child(3) .service-icon {
+            background: #fff3df;
+        }
+
+        .service-card:nth-child(5) .service-icon {
+            background: #f2eaff;
+        }
+
+        .service-card:nth-child(6) .service-icon {
+            background: #ffedf1;
         }
 
         .service-card h3 {
             color: var(--navy);
-            font-size: 17px;
-            margin-bottom: 10px;
+            font-size: 16px;
+            margin-bottom: 9px;
         }
 
         .service-card p {
             color: var(--muted);
-            font-size: 13px;
-            line-height: 1.7;
+            font-size: 12px;
+            line-height: 1.8;
+            flex-grow: 1;
         }
 
         .open-link {
             display: inline-block;
             color: var(--blue);
-            font-size: 13px;
-            font-weight: bold;
-            margin-top: 17px;
+            font-size: 12px;
+            font-weight: 800;
+            margin-top: 19px;
         }
-
-        /* Footer */
 
         .footer {
-            margin-top: 45px;
-            padding: 24px 15px;
+            margin-top: 55px;
+            padding: 27px 15px;
             text-align: center;
             background: var(--navy);
-            color: #cbd5e1;
-            font-size: 13px;
-            line-height: 1.8;
+            color: #c5cfe5;
+            font-size: 12px;
+            line-height: 2;
         }
 
-        @media (max-width: 850px) {
+        .footer strong {
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 900px) {
             .services {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
+
+            .header {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
         }
 
-        @media (max-width: 550px) {
+        @media (max-width: 580px) {
             .header {
                 padding: 20px 5%;
             }
 
             .brand h1 {
-                font-size: 22px;
+                font-size: 21px;
+            }
+
+            .brand p {
+                font-size: 9px;
+                letter-spacing: 1.3px;
+            }
+
+            .logo {
+                width: 47px;
+                height: 47px;
+                font-size: 24px;
             }
 
             .header-label {
-                font-size: 12px;
+                font-size: 10px;
             }
 
             .container {
-                width: 92%;
-                margin-top: 25px;
+                width: 91%;
+                margin-top: 28px;
             }
 
             .welcome h2 {
-                font-size: 24px;
+                font-size: 25px;
             }
 
             .stats,
             .services {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 23px;
             }
 
             .stat-value {
-                font-size: 26px;
+                font-size: 27px;
+            }
+
+            .service-card {
+                min-height: 200px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
             }
         }
     </style>
@@ -312,7 +424,6 @@
     <header class="header">
         <div class="brand">
             <div class="logo">🏦</div>
-
             <div>
                 <h1>ASHISH BANK</h1>
                 <p>TRUST · SECURITY · SERVICE</p>
@@ -328,15 +439,15 @@
 
         <section class="welcome">
             <div>
+                <div class="eyebrow">Your banking overview</div>
                 <h2>Welcome to Ashish Bank 👋</h2>
-
-                <p>
-                    Manage customer accounts and banking services
-                    from your central dashboard.
-                </p>
+                <p>Manage accounts and banking services from one convenient dashboard.</p>
             </div>
 
-            <div class="status">● Dashboard Overview</div>
+            <div class="status">
+                <span class="status-dot"></span>
+                Dashboard Active
+            </div>
         </section>
 
         <section class="stats">
@@ -348,6 +459,7 @@
                 </div>
 
                 <div class="stat-value" th:text="${totalCustomers}">0</div>
+                <div class="stat-note">Registered customer accounts</div>
             </div>
 
             <div class="stat-card balance">
@@ -359,14 +471,17 @@
                 <div class="stat-value">
                     ₹<span th:text="${totalBalance}">0.00</span>
                 </div>
+                <div class="stat-note">Combined balance across accounts</div>
             </div>
 
         </section>
 
         <section>
             <div class="section-heading">
-                <h2>Banking Services</h2>
-                <p>Select a service to continue.</p>
+                <div>
+                    <h2>Banking Services</h2>
+                    <p>Choose a service to manage your banking activities.</p>
+                </div>
             </div>
 
             <div class="services">
@@ -382,35 +497,35 @@
                     <div class="service-icon">💳</div>
                     <h3>Check Balance</h3>
                     <p>View account details and available balance.</p>
-                    <span class="open-link">Open service →</span>
+                    <span class="open-link">Check balance →</span>
                 </a>
 
                 <a href="/deposit" class="service-card">
                     <div class="service-icon">💵</div>
                     <h3>Deposit Money</h3>
                     <p>Add money to an existing customer account.</p>
-                    <span class="open-link">Open service →</span>
+                    <span class="open-link">Deposit now →</span>
                 </a>
 
                 <a href="/withdraw" class="service-card">
                     <div class="service-icon">🏧</div>
                     <h3>Withdraw Money</h3>
-                    <p>Withdraw money from an existing account.</p>
-                    <span class="open-link">Open service →</span>
+                    <p>Withdraw money from an eligible account.</p>
+                    <span class="open-link">Withdraw now →</span>
                 </a>
 
                 <a href="/transactions" class="service-card">
                     <div class="service-icon">📄</div>
                     <h3>Transaction History</h3>
-                    <p>Search and review previous transactions.</p>
-                    <span class="open-link">View transactions →</span>
+                    <p>Review your previous banking transactions.</p>
+                    <span class="open-link">View history →</span>
                 </a>
 
                 <a href="/create-account" class="service-card">
                     <div class="service-icon">➕</div>
                     <h3>Register Customer</h3>
-                    <p>Go to the existing customer account creation page.</p>
-                    <span class="open-link">Open service →</span>
+                    <p>Open the existing customer account creation page.</p>
+                    <span class="open-link">Register customer →</span>
                 </a>
 
             </div>
@@ -419,6 +534,8 @@
     </main>
 
     <footer class="footer">
+        <strong>ASHISH BANK</strong>
+        <br>
         © 2026 Ashish Bank | Banking Management System
         <br>
         Demo application for learning purposes.
