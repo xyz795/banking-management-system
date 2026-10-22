@@ -3,6 +3,7 @@ package com.ashish.banking.controller;
 import com.ashish.banking.entity.Customer;
 import com.ashish.banking.service.CustomerService;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,17 +31,25 @@ public class DepositController {
     public String depositMoney(
             @RequestParam String accountNumber,
             @RequestParam BigDecimal amount,
+            Authentication authentication,
             Model model,
             RedirectAttributes redirectAttributes) {
 
         try {
-            Customer customer = customerService.depositMoney(
-                    accountNumber, amount);
+            if (authentication == null
+                    || !authentication.isAuthenticated()) {
+                return "redirect:/login";
+            }
+
+            Customer updatedCustomer = customerService.depositMoneyForUser(
+                    accountNumber,
+                    amount,
+                    authentication.getName());
 
             redirectAttributes.addFlashAttribute(
                     "successMessage",
                     "Deposit successful! Updated balance: ₹"
-                            + customer.getBalance());
+                            + updatedCustomer.getBalance());
 
             return "redirect:/deposit";
 
@@ -48,7 +57,6 @@ public class DepositController {
             model.addAttribute("errorMessage", ex.getMessage());
             model.addAttribute("accountNumber", accountNumber);
             model.addAttribute("amount", amount);
-
             return "deposit";
         }
     }

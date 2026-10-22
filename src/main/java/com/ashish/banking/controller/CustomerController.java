@@ -1,8 +1,11 @@
 package com.ashish.banking.controller;
 
 import com.ashish.banking.entity.Customer;
+import com.ashish.banking.entity.User;
 import com.ashish.banking.service.CustomerService;
+import com.ashish.banking.service.UserService;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +19,13 @@ import java.math.BigDecimal;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final UserService userService;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(
+            CustomerService customerService,
+            UserService userService) {
         this.customerService = customerService;
+        this.userService = userService;
     }
 
     @GetMapping("/create-account")
@@ -31,12 +38,26 @@ public class CustomerController {
             @RequestParam String fullName,
             @RequestParam String mobileNumber,
             @RequestParam BigDecimal initialDeposit,
+            Authentication authentication,
             Model model,
             RedirectAttributes redirectAttributes) {
 
         try {
-            Customer customer = customerService.createAccount(
-                    fullName, mobileNumber, initialDeposit);
+            if (authentication == null
+                    || !authentication.isAuthenticated()) {
+                return "redirect:/login";
+            }
+
+            User owner = userService.findByEmail(
+                    authentication.getName())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Logged-in user was not found."));
+
+            Customer customer = customerService.createAccountForUser(
+                    fullName,
+                    mobileNumber,
+                    initialDeposit,
+                    owner);
 
             redirectAttributes.addFlashAttribute(
                     "successMessage",
@@ -59,10 +80,18 @@ public class CustomerController {
     @PostMapping("/check-balance")
     public String checkBalance(
             @RequestParam String accountNumber,
+            Authentication authentication,
             Model model) {
 
         try {
-            Customer customer = customerService.getAccountDetails(accountNumber);
+            if (authentication == null
+                    || !authentication.isAuthenticated()) {
+                return "redirect:/login";
+            }
+
+            Customer customer = customerService.getAccountDetailsForUser(
+                    accountNumber,
+                    authentication.getName());
 
             model.addAttribute("customer", customer);
 
