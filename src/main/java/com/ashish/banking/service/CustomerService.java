@@ -25,7 +25,6 @@ public class CustomerService {
         this.transactionRepository = transactionRepository;
     }
 
-    // 1. Create account without owner (legacy/admin use)
     @Transactional
     public Customer createAccount(
             String fullName,
@@ -52,7 +51,6 @@ public class CustomerService {
         return savedCustomer;
     }
 
-    // 2. Create account linked to the logged-in user
     @Transactional
     public Customer createAccountForUser(
             String fullName,
@@ -86,7 +84,6 @@ public class CustomerService {
         return savedCustomer;
     }
 
-    // 3. Validate account creation information
     private void validateAccountCreation(
             String fullName,
             String mobileNumber,
@@ -116,7 +113,6 @@ public class CustomerService {
         validateMoneyScale(initialDeposit);
     }
 
-    // 4. Generate a unique account number
     private String generateAccountNumber() {
         String accountNumber;
 
@@ -131,8 +127,6 @@ public class CustomerService {
         return accountNumber;
     }
 
-    // 5. Find account by account number
-    // Keep for existing administrative/internal callers.
     public Customer getAccountDetails(String accountNumber) {
         validateAccountNumber(accountNumber);
 
@@ -142,17 +136,12 @@ public class CustomerService {
                         "Account not found!"));
     }
 
-    // 6. Find account only if it belongs to the specified user
     public Customer getAccountDetailsForUser(
             String accountNumber,
             String email) {
 
         validateAccountNumber(accountNumber);
-
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Logged-in user is required.");
-        }
+        validateEmail(email);
 
         return customerRepository
                 .findByAccountNumberAndOwner_Email(
@@ -162,16 +151,15 @@ public class CustomerService {
                         "Account not found or you do not have permission to access it."));
     }
 
-    // 7. Existing deposit method
     @Transactional
-    public Customer depositMoney(
+    public Customer depositMoneyForUser(
             String accountNumber,
-            BigDecimal amount) {
+            BigDecimal amount,
+            String email) {
 
-        validateAccountNumber(accountNumber);
         validateAmount(amount);
 
-        Customer customer = getAccountDetails(accountNumber);
+        Customer customer = getAccountDetailsForUser(accountNumber, email);
         BigDecimal currentBalance = customer.getBalance();
 
         if (currentBalance == null) {
@@ -190,28 +178,15 @@ public class CustomerService {
         return updatedCustomer;
     }
 
-    // 8. Deposit with ownership verification
     @Transactional
-    public Customer depositMoneyForUser(
+    public Customer withdrawMoneyForUser(
             String accountNumber,
             BigDecimal amount,
             String email) {
 
-        Customer customer = getAccountDetailsForUser(accountNumber, email);
-
-        return depositMoney(customer.getAccountNumber(), amount);
-    }
-
-    // 9. Existing withdrawal method
-    @Transactional
-    public Customer withdrawMoney(
-            String accountNumber,
-            BigDecimal amount) {
-
-        validateAccountNumber(accountNumber);
         validateAmount(amount);
 
-        Customer customer = getAccountDetails(accountNumber);
+        Customer customer = getAccountDetailsForUser(accountNumber, email);
         BigDecimal currentBalance = customer.getBalance();
 
         if (currentBalance == null
@@ -231,28 +206,17 @@ public class CustomerService {
         return updatedCustomer;
     }
 
-    // 10. Withdrawal with ownership verification
     @Transactional
-    public Customer withdrawMoneyForUser(
-            String accountNumber,
-            BigDecimal amount,
-            String email) {
-
-        Customer customer = getAccountDetailsForUser(accountNumber, email);
-
-        return withdrawMoney(customer.getAccountNumber(), amount);
-    }
-
-    // 11. Existing transfer method
-    @Transactional
-    public void transferMoney(
+    public void transferMoneyForUser(
             String senderAccountNumber,
             String receiverAccountNumber,
-            BigDecimal amount) {
+            BigDecimal amount,
+            String email) {
 
         validateAccountNumber(senderAccountNumber);
         validateAccountNumber(receiverAccountNumber);
         validateAmount(amount);
+        validateEmail(email);
 
         String senderNumber = senderAccountNumber.trim();
         String receiverNumber = receiverAccountNumber.trim();
@@ -262,8 +226,12 @@ public class CustomerService {
                     "Sender and receiver accounts must be different.");
         }
 
-        Customer sender = getAccountDetails(senderNumber);
-        Customer receiver = getAccountDetails(receiverNumber);
+        Customer sender = getAccountDetailsForUser(senderNumber, email);
+
+        Customer receiver = customerRepository
+                .findByAccountNumber(receiverNumber)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Receiver account not found."));
 
         BigDecimal senderBalance = sender.getBalance();
         BigDecimal receiverBalance = receiver.getBalance();
@@ -294,25 +262,6 @@ public class CustomerService {
                 amount);
     }
 
-    // 12. Transfer with sender ownership verification
-    @Transactional
-    public void transferMoneyForUser(
-            String senderAccountNumber,
-            String receiverAccountNumber,
-            BigDecimal amount,
-            String email) {
-
-        Customer sender = getAccountDetailsForUser(
-                senderAccountNumber,
-                email);
-
-        transferMoney(
-                sender.getAccountNumber(),
-                receiverAccountNumber,
-                amount);
-    }
-
-    // 13. Save transaction
     private void saveTransaction(
             String accountNumber,
             String type,
@@ -327,7 +276,6 @@ public class CustomerService {
         transactionRepository.save(transaction);
     }
 
-    // 14. Validate account number
     private void validateAccountNumber(String accountNumber) {
         if (accountNumber == null || accountNumber.isBlank()) {
             throw new IllegalArgumentException(
@@ -335,7 +283,13 @@ public class CustomerService {
         }
     }
 
-    // 15. Validate transaction amount
+    private void validateEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Logged-in user is required.");
+        }
+    }
+
     private void validateAmount(BigDecimal amount) {
         if (amount == null
                 || amount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -346,7 +300,6 @@ public class CustomerService {
         validateMoneyScale(amount);
     }
 
-    // 16. Money must have at most two decimal places
     private void validateMoneyScale(BigDecimal amount) {
         if (amount.scale() > 2) {
             throw new IllegalArgumentException(
