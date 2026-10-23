@@ -157,9 +157,17 @@ public class CustomerService {
             BigDecimal amount,
             String email) {
 
+        validateAccountNumber(accountNumber);
+        validateEmail(email);
         validateAmount(amount);
 
-        Customer customer = getAccountDetailsForUser(accountNumber, email);
+        Customer customer = customerRepository
+                .findByAccountNumberAndOwnerEmailForUpdate(
+                        accountNumber.trim(),
+                        email.trim())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Account not found or you do not have permission to access it."));
+
         BigDecimal currentBalance = customer.getBalance();
 
         if (currentBalance == null) {
@@ -184,9 +192,17 @@ public class CustomerService {
             BigDecimal amount,
             String email) {
 
+        validateAccountNumber(accountNumber);
+        validateEmail(email);
         validateAmount(amount);
 
-        Customer customer = getAccountDetailsForUser(accountNumber, email);
+        Customer customer = customerRepository
+                .findByAccountNumberAndOwnerEmailForUpdate(
+                        accountNumber.trim(),
+                        email.trim())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Account not found or you do not have permission to access it."));
+
         BigDecimal currentBalance = customer.getBalance();
 
         if (currentBalance == null
@@ -220,18 +236,53 @@ public class CustomerService {
 
         String senderNumber = senderAccountNumber.trim();
         String receiverNumber = receiverAccountNumber.trim();
+        String userEmail = email.trim();
 
         if (senderNumber.equals(receiverNumber)) {
             throw new IllegalArgumentException(
                     "Sender and receiver accounts must be different.");
         }
 
-        Customer sender = getAccountDetailsForUser(senderNumber, email);
+        /*
+         * Lock both accounts in a consistent account-number order.
+         * This reduces the risk of deadlocks when transfers happen
+         * simultaneously in opposite directions.
+         */
+        Customer sender;
+        Customer receiver;
 
-        Customer receiver = customerRepository
-                .findByAccountNumber(receiverNumber)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Receiver account not found."));
+        if (senderNumber.compareTo(receiverNumber) < 0) {
+
+            Customer first = lockAccount(senderNumber);
+            Customer second = lockAccount(receiverNumber);
+
+            if (!userEmail.equalsIgnoreCase(
+                    first.getOwner() == null
+                            ? ""
+                            : first.getOwner().getEmail())) {
+                throw new IllegalArgumentException(
+                        "You do not have permission to access the sender account.");
+            }
+
+            sender = first;
+            receiver = second;
+
+        } else {
+
+            Customer first = lockAccount(receiverNumber);
+            Customer second = lockAccount(senderNumber);
+
+            if (!userEmail.equalsIgnoreCase(
+                    second.getOwner() == null
+                            ? ""
+                            : second.getOwner().getEmail())) {
+                throw new IllegalArgumentException(
+                        "You do not have permission to access the sender account.");
+            }
+
+            sender = second;
+            receiver = first;
+        }
 
         BigDecimal senderBalance = sender.getBalance();
         BigDecimal receiverBalance = receiver.getBalance();
@@ -260,6 +311,13 @@ public class CustomerService {
                 receiver.getAccountNumber(),
                 "TRANSFER_RECEIVED",
                 amount);
+    }
+
+    private Customer lockAccount(String accountNumber) {
+        return customerRepository
+                .findByAccountNumberForUpdate(accountNumber)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Account not found: " + accountNumber));
     }
 
     private void saveTransaction(
