@@ -4,13 +4,15 @@ import com.ashish.banking.service.CustomUserDetailsService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
 public class SecurityConfig {
@@ -41,8 +43,6 @@ public class SecurityConfig {
                                 .authenticationProvider(authenticationProvider)
 
                                 .authorizeHttpRequests(auth -> auth
-
-                                                // Public pages and static resources
                                                 .requestMatchers(
                                                                 "/login",
                                                                 "/register",
@@ -51,10 +51,8 @@ public class SecurityConfig {
                                                                 "/images/**")
                                                 .permitAll()
 
-                                                // Admin-only pages
                                                 .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                                                // Customer-only pages
                                                 .requestMatchers(
                                                                 "/create-account",
                                                                 "/check-balance",
@@ -65,7 +63,6 @@ public class SecurityConfig {
                                                                 "/customer/**")
                                                 .hasRole("CUSTOMER")
 
-                                                // Other pages require login
                                                 .anyRequest().authenticated())
 
                                 .formLogin(form -> form
@@ -79,8 +76,27 @@ public class SecurityConfig {
 
                                 .logout(logout -> logout
                                                 .logoutSuccessUrl("/login?logout")
-                                                .permitAll());
+                                                .invalidateHttpSession(true)
+                                                .clearAuthentication(true)
+                                                .deleteCookies("JSESSIONID")
+                                                .permitAll())
+
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                                                .sessionFixation(fixation -> fixation.changeSessionId()))
+
+                                .exceptionHandling(exceptions -> exceptions
+                                                .accessDeniedHandler((request, response, exception) -> {
+                                                        response.sendError(
+                                                                        HttpStatus.FORBIDDEN.value(),
+                                                                        "You are not authorized to access this resource.");
+                                                }));
 
                 return http.build();
+        }
+
+        @Bean
+        public HttpSessionEventPublisher httpSessionEventPublisher() {
+                return new HttpSessionEventPublisher();
         }
 }
