@@ -1,6 +1,7 @@
 package com.ashish.banking;
 
 import com.ashish.banking.entity.Customer;
+import com.ashish.banking.entity.User;
 import com.ashish.banking.repository.CustomerRepository;
 import com.ashish.banking.repository.TransactionRepository;
 import com.ashish.banking.service.CustomerService;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -161,4 +163,29 @@ class CustomerServiceTest {
                 .findByAccountNumberForUpdate(anyString());
     }
 
+    @Test
+    void transferShouldRejectZeroAmount() {
+        assertThrows(IllegalArgumentException.class,
+                () -> customerService.transferMoneyForUser(
+                        "1111111111",
+                        "2222222222",
+                        BigDecimal.ZERO,
+                        email));
+
+        verify(customerRepository, never())
+                .findByAccountNumberForUpdate(anyString());
+    }
+
+    @Test
+    void transferShouldRejectSameAccount() {
+        assertThrows(IllegalArgumentException.class,
+                () -> customerService.transferMoneyForUser(
+                        accountNumber,
+                        accountNumber,
+                        new BigDecimal("100.00"),
+                        email));
+
+        verify(customerRepository, never())
+                .findByAccountNumberForUpdate(anyString());
+    }
 }
