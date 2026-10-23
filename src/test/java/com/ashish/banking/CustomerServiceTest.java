@@ -188,4 +188,31 @@ class CustomerServiceTest {
         verify(customerRepository, never())
                 .findByAccountNumberForUpdate(anyString());
     }
+
+    @Test
+    void transferShouldRejectUnauthorizedSender() {
+        Customer sender = new Customer();
+        sender.setAccountNumber("1111111111");
+        sender.setBalance(new BigDecimal("1000.00"));
+
+        User anotherUser = new User();
+        anotherUser.setEmail("other@example.com");
+        sender.setOwner(anotherUser);
+
+        when(customerRepository.findByAccountNumberForUpdate("1111111111"))
+                .thenReturn(Optional.of(sender));
+
+        when(customerRepository.findByAccountNumberForUpdate("2222222222"))
+                .thenReturn(Optional.of(new Customer()));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> customerService.transferMoneyForUser(
+                        "1111111111",
+                        "2222222222",
+                        new BigDecimal("100.00"),
+                        email));
+
+        verify(customerRepository, never()).save(any(Customer.class));
+        verify(transactionRepository, never()).save(any());
+    }
 }
